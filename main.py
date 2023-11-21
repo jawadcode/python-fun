@@ -6,7 +6,7 @@ from utils import Peekable
 
 def run(source: str):
     lexer = Peekable(Lexer(source))
-    for token in lexer:
+    while not ((token := next(lexer)) is None):
         print(token)
 
 

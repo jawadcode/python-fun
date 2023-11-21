@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Callable, Optional, TypeVar
+from typing_extensions import override
 
-from utils import Span, map_pred
+from utils import Span, Spanned, map_pred
 
 
 class TK(Enum):
@@ -33,6 +34,9 @@ class Token:
 
     def __str__(self) -> str:
         return f"{self.kind.value: <15} @ {str(self.span)}"
+
+    def get_source(self, source: str) -> Spanned[str]:
+        return Spanned(span=self.span, data=source[self.span.start : self.span.end])
 
 
 class Lexer:

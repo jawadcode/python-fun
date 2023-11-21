@@ -60,7 +60,21 @@ class Peekable(Generic[T]):
 U = TypeVar("U")
 
 
-def map_pred(opt: Optional[U], f: Callable[[U], bool]) -> bool:
+@dataclass
+class Spanned(Generic[U]):
+    span: Span
+    data: U
+
+    V = TypeVar("V")
+
+    def map_data(self, f: Callable[[U], V]) -> "Spanned[V]":
+        return Spanned(span=self.span, data=f(self.data))
+
+
+W = TypeVar("W")
+
+
+def map_pred(opt: Optional[W], f: Callable[[W], bool]) -> bool:
     if opt is None:
         return False
     else:

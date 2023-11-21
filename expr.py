@@ -1,23 +1,25 @@
 from dataclasses import dataclass
 from enum import Enum
 
+from utils import Spanned
+
 
 @dataclass
-class LetBind:
-    name: str
+class RawLetBind:
+    name: Spanned[str]
     value: "Expr"
 
 
 @dataclass
 class LetIn:
-    bindings: list[LetBind]
+    bindings: list[Spanned[RawLetBind]]
     body: "Expr"
 
 
 @dataclass
 class Fun:
     # Only a single parameter because of auto-currying
-    param: str
+    param: Spanned[str]
     body: "Expr"
 
 
@@ -43,7 +45,7 @@ class Print:
 
 @dataclass
 class Ident:
-    ident: str
+    ident: Spanned[str]
 
 
 @dataclass
@@ -51,4 +53,6 @@ class IntLit:
     num: int
 
 
-Expr = LetBind | Fun | BinOp | Print | Ident | IntLit
+RawExpr = LetIn | Fun | BinOp | Print | Ident | IntLit
+
+Expr = Spanned[RawExpr]
