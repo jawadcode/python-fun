@@ -58,7 +58,7 @@ class Lexer:
         self.current += 1
 
     def at_end(self) -> bool:
-        return self.current == len(self.source) - 1
+        return self.current == len(self.source)
 
     def peek(self) -> Optional[str]:
         if self.at_end():
