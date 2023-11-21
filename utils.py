@@ -25,6 +25,12 @@ T = TypeVar("T")
 
 
 class Peekable(Generic[T]):
+    """
+    Wraps any `Iterator[T]` and provides a `peek` method that returns the current element without consuming it
+
+    Note: This adapter does not throw `StopIteration` on the final element but rather returns `None`
+    """
+
     head: Optional[T]
     iterator: Iterator[T]
     peeked: bool
@@ -34,21 +40,21 @@ class Peekable(Generic[T]):
         self.iterator = iterator
         self.peeked = False
 
-    def peek(self):
+    def peek(self) -> Optional[T]:
         if not self.peeked:
             self.peeked = True
-            self.head = next(self.iterator)
-            return self.head
+            self.head = next(self.iterator, None)
+        return self.head
 
-    def __iter__(self):
+    def __iter__(self) -> "Peekable[T]":
         return self
 
-    def __next__(self):
+    def __next__(self) -> Optional[T]:
         if self.peeked:
             self.peeked = False
             return self.head
         else:
-            return next(self.iterator)
+            return next(self.iterator, None)
 
 
 U = TypeVar("U")
