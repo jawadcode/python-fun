@@ -28,15 +28,21 @@ class TK(Enum):
 
 
 @dataclass
-class Token:
-    kind: TK
+class Token(Spanned[TK]):
     span: Span
+    data: TK
 
     def __str__(self) -> str:
-        return f"{self.kind.value: <15} @ {str(self.span)}"
+        return f"{self.data.value: <15} @ {str(self.span)}"
 
     def get_source(self, source: str) -> Spanned[str]:
         return Spanned(span=self.span, data=source[self.span.start : self.span.end])
+
+    T = TypeVar("T")
+
+    @override
+    def map_data(self, f: Callable[[TK], T]) -> Spanned[T]:
+        return Spanned(span=self.span, data=f(self.data))
 
 
 class Lexer:
@@ -177,8 +183,8 @@ class Lexer:
                 raise StopIteration
             case (TK.TK_EOF, span):
                 self.eof = True
-                return Token(kind=TK.TK_EOF, span=span)
-            case (kind, span):
-                return Token(kind, span)
+                return Token(data=TK.TK_EOF, span=span)
+            case (data, span):
+                return Token(span, data)
 
         assert False, "unreachable"

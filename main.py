@@ -1,18 +1,6 @@
 import argparse
 
-from lexer import Lexer
-from utils import Peekable
-
-
-def run(source: str):
-    lexer = Peekable(Lexer(source))
-    while not ((token := next(lexer)) is None):
-        print(token)
-
-
-def repl():
-    while line := input("$ "):
-        run(line)
+from parser import Parser, UnexpectedEOI, UnexpectedToken
 
 
 def main(args: argparse.Namespace):
@@ -22,6 +10,42 @@ def main(args: argparse.Namespace):
         case "run":
             source = open(args.path, "r").read()
             run(source)
+
+
+def run(source: str):
+    parser = Parser(source)
+    try:
+        expr = parser.parse_expr()
+        print(str(expr))
+    except UnexpectedEOI:
+        print("Unexpected end of input")
+    except UnexpectedToken as ut:
+        tokens = ", ".join(map(str, ut.expected))
+        print(f"Expected {tokens}, got {str(ut.got)}")
+
+
+def repl():
+    try:
+        while line := input("$ "):
+            if line.startswith(":"):
+                match line[1:]:
+                    case "h" | "help":
+                        print_help()
+                    case "q" | "quit":
+                        exit(0)
+            else:
+                run(line)
+
+    except (KeyboardInterrupt, EOFError):
+        exit(1)
+
+
+def print_help():
+    print(
+        """Commands:
+    :h/:help - Print this message
+    :q/:quit - Exit the REPL"""
+    )
 
 
 if __name__ == "__main__":

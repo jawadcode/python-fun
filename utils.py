@@ -70,6 +70,9 @@ class Spanned(Generic[U]):
     def map_data(self, f: Callable[[U], V]) -> "Spanned[V]":
         return Spanned(span=self.span, data=f(self.data))
 
+    def __str__(self) -> str:
+        return str(self.data)
+
 
 W = TypeVar("W")
 
