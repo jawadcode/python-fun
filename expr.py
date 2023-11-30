@@ -95,10 +95,10 @@ class Print:
 
 @dataclass
 class Ident:
-    ident: Spanned[str]
+    ident: str
 
     def __str__(self) -> str:
-        return str(self.ident.data)
+        return self.ident
 
 
 @dataclass

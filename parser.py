@@ -148,7 +148,7 @@ class Parser:
 
     def parse_ident(self) -> Expr:
         ident = self.next()
-        return Spanned(span=ident.span, data=Ident(self.token_source(ident)))
+        return Spanned(span=ident.span, data=Ident(self.token_source(ident).data))
 
     def parse_int(self) -> Expr:
         num = self.token_source(self.next())
@@ -181,7 +181,6 @@ class Parser:
             case _:
                 raise UnexpectedToken(expected=[expected], got=self.next())
 
-        # Mypy doesn't seem to have implemented match exhaustivity checking
         assert False, "unreachable"
 
     def token_source(self, tok: Token) -> Spanned[str]:

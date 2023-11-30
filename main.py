@@ -1,4 +1,5 @@
 import argparse
+from interpret import Interpret, NotBound, Ty, TypeMismatch
 
 from parser import Parser, UnexpectedEOI, UnexpectedToken
 
@@ -17,11 +18,18 @@ def run(source: str):
     try:
         expr = parser.parse_expr()
         print(str(expr))
-    except UnexpectedEOI:
-        print("Unexpected end of input")
-    except UnexpectedToken as ut:
-        tokens = ", ".join(map(str, ut.expected))
-        print(f"Expected {tokens}, got {str(ut.got)}")
+        print(Interpret(None).interpret(expr))
+    except Exception as exp:
+        match exp:
+            case UnexpectedEOI():
+                print("Unexpected end of input")
+            case UnexpectedToken(expected, got):
+                tokens = ", ".join(map(str, expected))
+                print(f"Expected {tokens}, got {str(got)}")
+            case NotBound(span):
+                print(f"Unbound variable @ {str(span)}")
+            case TypeMismatch(span, e, g):
+                print(f"Type mismatch @ {str(span)}: expected {e}, got: {g}")
 
 
 def repl():
